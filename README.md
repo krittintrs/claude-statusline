@@ -12,13 +12,33 @@ As context fills, the bar shifts green → yellow → red and the icon escalates
 
 ---
 
-## Quick install
+## Install
+
+Two ways, depending on whether you want to customize.
+
+### Option A — the skill (guided & customizable)
+
+Install the setup skill with [`npx skills`](https://github.com/vercel-labs/skills):
+
+```bash
+npx skills@latest add krittintrs/claude-statusline
+```
+
+Then in Claude Code, run:
+
+```
+/statusline-setup
+```
+
+The skill installs the statusline for you and walks you through any changes in plain English — see your current bar, browse every field and style, preview live, and write only when you're happy. Best if you want to tweak the design.
+
+### Option B — one-liner (just the default, fast)
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/krittintrs/claude-statusline/main/install.sh | bash
 ```
 
-This downloads `statusline.sh` to `~/.claude/`, backs up and patches your `settings.json`, and you're done. Restart Claude Code (or send a prompt) to see it.
+Downloads `statusline.sh` to `~/.claude/`, backs up and patches `settings.json`, done. Restart Claude Code (or send a prompt) to see it.
 
 **Requirements:** `jq` (recommended) or `python3`. The script falls back gracefully. On Windows, run inside **Git Bash** — Claude Code executes the statusline through it.
 
@@ -55,19 +75,15 @@ This isn't a kitchen-sink widget dump — every choice is deliberate:
 
 ## Customize it
 
-Want it different? Install the skill and just describe what you want:
+If you installed the skill (Option A), just run `/statusline-setup` and describe what you want in plain English — *"remove cost"*, *"plain text instead of the gradient"*, *"add PR number"*, *"rate limits on one line"*. It previews each change live and writes only when you confirm.
+
+Already installed the default via Option B? Add the skill anytime:
 
 ```bash
-# copy the skill into your Claude Code skills dir
-cp -r skills/statusline-setup ~/.claude/skills/
+npx skills@latest add krittintrs/claude-statusline
 ```
 
-Then in Claude Code:
-```
-/statusline-setup
-```
-
-The skill walks you through it — shows your current statusline, lists every available field and display style, previews changes live, and writes the result only when you're happy. Say things like *"remove cost"*, *"plain text instead of the gradient"*, *"add PR number"*, *"rate limits on one line"*.
+What you can change:
 
 - [Available fields](skills/statusline-setup/fields-ref.md) — everything you can show
 - [Display styles](skills/statusline-setup/styles-ref.md) — every way to show it
