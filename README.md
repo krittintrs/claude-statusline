@@ -2,15 +2,13 @@
 
 A curated, good-looking statusline for [Claude Code](https://claude.com/claude-code) — plus a guided skill to customize it in plain English.
 
-![default statusline](assets/default.png)
-
-```
-vibe ⎇ main  │  Sonnet 4.6 medium  │  🌿 ████░░░░░░ 42%  │  $0.85
-├ 5h: ░░░░░░░░░░   2% ◷ 4h 50m
-└ 7d: ███░░░░░░░  35% ◷ 18h 0m
-```
+![default statusline](assets/default.svg)
 
 A truecolor gradient context bar, live rate-limit countdowns, git branch/worktree, model, effort, and session cost — all in one always-visible bar below your prompt.
+
+As context fills, the bar shifts green → yellow → red and the icon escalates 🌿 → ⚡ → 🔥:
+
+![statusline at high context](assets/high-context.svg)
 
 ---
 
@@ -41,6 +39,8 @@ This downloads `statusline.sh` to `~/.claude/`, backs up and patches your `setti
 ---
 
 ## The design choices
+
+![display styles](assets/styles.svg)
 
 This isn't a kitchen-sink widget dump — every choice is deliberate:
 
