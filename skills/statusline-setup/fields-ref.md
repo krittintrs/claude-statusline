@@ -9,11 +9,14 @@ Present these grouped as below. ✓ marks what the curated default already uses.
 |-------|---------|:---:|
 | `model.display_name` | Model name, e.g. `Sonnet 4.6` | ✓ |
 | `model.id` | Model identifier, e.g. `claude-sonnet-4-6` | |
-| `effort.level` | Reasoning effort: low/medium/high/xhigh/max (absent if unsupported) | ✓ |
+| `effort.level` | Reasoning effort: low/medium/high/xhigh/max (absent if unsupported; ultracode reports as xhigh) | ✓ |
+| `fast_mode` | Whether Fast Mode is enabled for the session | |
 | `thinking.enabled` | Whether extended thinking is on | |
 | `output_style.name` | Active output style | |
 | `session_name` | Custom name from `--name`/`/rename` (absent if unset) | |
 | `session_id` | Unique session id (stable per session — good cache key) | |
+| `prompt_id` | UUID of the prompt being processed (absent until first input) | |
+| `transcript_path` | Path to the conversation transcript `.jsonl` | |
 | `version` | Claude Code version | |
 | `agent.name` | Agent name when run with `--agent` | |
 | `vim.mode` | NORMAL/INSERT/VISUAL when vim mode is on | |
@@ -25,12 +28,16 @@ Present these grouped as below. ✓ marks what the curated default already uses.
 | `workspace.project_dir` | Directory Claude was launched in | |
 | `workspace.repo.name` | Repo name from origin remote | ✓ |
 | `workspace.repo.owner`, `.host` | e.g. `anthropics`, `github.com` | |
-| `workspace.git_worktree` | Worktree name when inside a linked worktree | ✓ |
+| `workspace.git_worktree` | Worktree name when inside *any* linked worktree | ✓ |
 | `workspace.added_dirs` | Dirs added via `/add-dir` | |
+| `worktree.name`, `.path`, `.branch` | Active worktree during `--worktree` sessions (branch absent for hook-based worktrees) | |
+| `worktree.original_cwd`, `.original_branch` | Dir/branch before entering the worktree | |
 | `pr.number`, `pr.url` | Open PR for the current branch | |
 | `pr.review_state` | approved / pending / changes_requested / draft | |
 
 (Git branch itself is not in the JSON — read it with `git branch --show-current`.)
+
+`workspace.git_worktree` (a name) fires for *any* git worktree; the richer `worktree.*` object only fires for `--worktree` sessions.
 
 ## Context window
 | Field | Meaning | Default |

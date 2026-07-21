@@ -45,4 +45,25 @@ For the full list of fields you can pull, see [fields-ref.md]. For display style
 }
 ```
 
-`refreshInterval: 60` re-runs the script every 60 seconds so rate-limit countdowns stay live during idle sessions.
+`refreshInterval: 60` re-runs the script every 60 seconds so rate-limit countdowns stay live during idle sessions. Minimum is `1`; leave unset to run only on events (new assistant message, `/compact` finish, permission-mode change, vim toggle, session start).
+
+**Other optional `statusLine` keys:**
+| Key | Effect |
+|-----|--------|
+| `padding` | Extra horizontal indent in characters (default `0`), on top of the built-in spacing |
+| `hideVimModeIndicator` | `true` suppresses the built-in `-- INSERT --` text — set it when the script renders `vim.mode` itself, so it isn't shown twice |
+
+## Performance: cache slow git calls
+
+The script runs on every update trigger. If it shells out to `git` on each run, cache the result to a temp file keyed on **`session_id`** (stable per session, unique across sessions) — not `$$`/PID, which changes every invocation and defeats the cache. Refresh only when the cache is older than ~5s.
+
+## Subagent rows — `subagentStatusLine`
+
+A *separate* setting customises each subagent's row in the agent panel (Claude Code v2.1.205+):
+```json
+"subagentStatusLine": {
+  "type": "command",
+  "command": "~/.claude/subagent-statusline.sh"
+}
+```
+Same JSON-on-stdin model, but the input carries a `tasks[]` array — each task has `id`, `name`, `status`, `description`, `model`, `effort`, `tokenCount`, `contextWindowSize`, `cwd`, etc. Write one JSON line per row to override: `{"id":"<task id>","content":"<row body>"}` (ANSI + OSC8 allowed). Omit a task's `id` to keep its default row; emit empty `content` to hide it. Only pursue this if the user explicitly wants to style subagent rows.
