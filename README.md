@@ -80,7 +80,7 @@ Downloads `statusline.sh` to `~/.claude/`, backs up and patches `settings.json`,
 
 ## The design choices
 
-![display styles](assets/styles.png)
+<img src="assets/styles.png" alt="display styles" width="420">
 
 This isn't a kitchen-sink widget dump — every choice is deliberate:
 
