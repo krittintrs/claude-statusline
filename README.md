@@ -1,10 +1,16 @@
 # claude-statusline
 
-A curated, good-looking statusline for [Claude Code](https://claude.com/claude-code) you can customize in plain English.
+A curated, good-looking statusline for [Claude Code](https://claude.com/claude-code) that you can customize in plain English.
 
 ![default statusline](assets/default.png)
 
-One always-visible bar below your prompt: truecolor gradient context, live rate-limit countdowns, git branch/worktree, model, effort, and session cost.
+One always-visible bar below your prompt:
+
+- Truecolor gradient context bar
+- Live rate-limit countdowns
+- Git branch / worktree
+- Model + effort
+- Session cost
 
 As context fills, the bar shifts green → yellow → red and the icon escalates 🌿 → ⚡ → 🔥:
 
