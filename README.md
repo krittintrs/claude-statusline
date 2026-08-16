@@ -14,35 +14,11 @@ As context fills, the bar shifts green → yellow → red and the icon escalates
 
 ## Install
 
-Two ways, depending on whether you want to customize.
+Three ways, depending on whether you want to customize.
 
-### Option A — the skill (guided & customizable)
+### Option 0 — paste a prompt to Claude Code
 
-Install the setup skill with [`npx skills`](https://github.com/vercel-labs/skills):
-
-```bash
-npx skills@latest add krittintrs/claude-statusline
-```
-
-Then in Claude Code, run:
-
-```
-/statusline-setup
-```
-
-The skill installs the statusline for you and walks you through any changes in plain English — see your current bar, browse every field and style, preview live, and write only when you're happy. Best if you want to tweak the design.
-
-### Option B — one-liner (just the default, fast)
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/krittintrs/claude-statusline/main/install.sh | bash
-```
-
-Downloads `statusline.sh` to `~/.claude/`, backs up and patches `settings.json`, done. Restart Claude Code (or send a prompt) to see it.
-
-### Option C — paste a prompt to Claude Code
-
-Already chatting with Claude Code? Skip the terminal — paste this in and it'll explain the two options above, ask which you want, then install it for you:
+Already chatting with Claude Code? Skip the terminal — paste this in and it'll explain the two options below, ask which you want, then install it for you:
 
 ```text
 Set up claude-statusline for me (https://github.com/krittintrs/claude-statusline).
@@ -59,6 +35,30 @@ Then ask which I want, and do it:
 
 Confirm when done and tell me how to verify the statusline is showing.
 ```
+
+### Option 1 — the skill (guided & customizable)
+
+Install the setup skill with [`npx skills`](https://github.com/vercel-labs/skills):
+
+```bash
+npx skills@latest add krittintrs/claude-statusline
+```
+
+Then in Claude Code, run:
+
+```
+/statusline-setup
+```
+
+The skill installs the statusline for you and walks you through any changes in plain English — see your current bar, browse every field and style, preview live, and write only when you're happy. Best if you want to tweak the design.
+
+### Option 2 — one-liner (just the default, fast)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/krittintrs/claude-statusline/main/install.sh | bash
+```
+
+Downloads `statusline.sh` to `~/.claude/`, backs up and patches `settings.json`, done. Restart Claude Code (or send a prompt) to see it.
 
 **Requirements:** `jq` (recommended) or `python3`. The script falls back gracefully. On Windows, run inside **Git Bash** — Claude Code executes the statusline through it.
 
@@ -95,9 +95,9 @@ This isn't a kitchen-sink widget dump — every choice is deliberate:
 
 ## Customize it
 
-If you installed the skill (Option A), just run `/statusline-setup` and describe what you want in plain English — *"remove cost"*, *"plain text instead of the gradient"*, *"add PR number"*, *"rate limits on one line"*. It previews each change live and writes only when you confirm.
+If you installed the skill (Option 1), just run `/statusline-setup` and describe what you want in plain English — *"remove cost"*, *"plain text instead of the gradient"*, *"add PR number"*, *"rate limits on one line"*. It previews each change live and writes only when you confirm.
 
-Already installed the default via Option B? Add the skill anytime:
+Already installed the default via Option 2? Add the skill anytime:
 
 ```bash
 npx skills@latest add krittintrs/claude-statusline

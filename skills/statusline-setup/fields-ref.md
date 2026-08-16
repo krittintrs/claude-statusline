@@ -15,7 +15,7 @@ Present these grouped as below. ✓ marks what the curated default already uses.
 | `output_style.name` | Active output style | |
 | `session_name` | Custom name from `--name`/`/rename` (absent if unset) | |
 | `session_id` | Unique session id (stable per session — good cache key) | |
-| `prompt_id` | UUID of the prompt being processed (absent until first input) | |
+| `prompt_id` | UUID of the prompt being processed (absent until first input; v2.1.196+) | |
 | `transcript_path` | Path to the conversation transcript `.jsonl` | |
 | `version` | Claude Code version | |
 | `agent.name` | Agent name when run with `--agent` | |
@@ -24,6 +24,7 @@ Present these grouped as below. ✓ marks what the curated default already uses.
 ## Directory & git
 | Field | Meaning | Default |
 |-------|---------|:---:|
+| `cwd` | Current working directory — same value as `workspace.current_dir`, which is preferred for consistency with `.project_dir` | |
 | `workspace.current_dir` | Current working directory | ✓ |
 | `workspace.project_dir` | Directory Claude was launched in | |
 | `workspace.repo.name` | Repo name from origin remote | ✓ |
@@ -69,4 +70,4 @@ Present these grouped as below. ✓ marks what the curated default already uses.
 Absent until the first API response, and only for subscribers. Each window can be independently absent.
 
 ## Environment (not JSON)
-- `COLUMNS` / `LINES` — terminal size, set by Claude Code before the script runs. Use to truncate or wrap output on narrow terminals.
+- `COLUMNS` / `LINES` — terminal size, set by Claude Code before the script runs (v2.1.153+). Use to truncate or wrap output on narrow terminals; `tput cols` and language-level width detection don't work here since Claude Code captures the script's output instead of connecting it to the terminal directly.

@@ -47,6 +47,10 @@ For the full list of fields you can pull, see [fields-ref.md]. For display style
 
 `refreshInterval: 60` re-runs the script every 60 seconds so rate-limit countdowns stay live during idle sessions. Minimum is `1`; leave unset to run only on events (new assistant message, `/compact` finish, permission-mode change, vim toggle, session start).
 
+**Updates debounce at 300ms** — rapid triggers batch into one run. If a new trigger fires while the script is still running, Claude Code **cancels the in-flight run**. Keep scripts fast (cache slow calls below); a script that routinely takes longer than the update cadence just gets killed mid-run and never shows fresh output.
+
+Enabling a custom `statusLine` also **hides most footer keyboard hints** (`esc to interrupt`, `? for shortcuts`, the voice-dictation hint) — that's expected, not a bug the script needs to work around.
+
 **Other optional `statusLine` keys:**
 | Key | Effect |
 |-----|--------|
@@ -66,4 +70,10 @@ A *separate* setting customises each subagent's row in the agent panel (Claude C
   "command": "~/.claude/subagent-statusline.sh"
 }
 ```
-Same JSON-on-stdin model, but the input carries a `tasks[]` array — each task has `id`, `name`, `status`, `description`, `model`, `effort`, `tokenCount`, `contextWindowSize`, `cwd`, etc. Write one JSON line per row to override: `{"id":"<task id>","content":"<row body>"}` (ANSI + OSC8 allowed). Omit a task's `id` to keep its default row; emit empty `content` to hide it. Only pursue this if the user explicitly wants to style subagent rows.
+The command runs once per refresh tick and receives the base hook fields, a `columns` field (usable row width), and a `tasks[]` array on stdin. Each task has `id`, `name`, `type`, `status`, `description`, `label`, `startTime`, `model`, `effort`, `contextWindowSize`, `tokenCount`, `tokenSamples`, `cwd`. `model`/`contextWindowSize` require v2.1.205+; `effort` (the level string or a numeric token budget) requires v2.1.214+ and is absent when the subagent inherits the session's effort. Write one JSON line per row to override: `{"id":"<task id>","content":"<row body>"}` (ANSI + OSC8 allowed). Omit a task's `id` to keep its default row; emit empty `content` to hide it. Only pursue this if the user explicitly wants to style subagent rows.
+
+## Troubleshooting gotchas worth knowing
+
+- **`allowManagedHooksOnly`** (an org policy in managed settings) makes a user's custom `statusLine` disappear silently — only a `statusLine` set in *managed* settings survives. If a user's script looks correct but nothing shows, ask whether their org enforces this.
+- **Workspace trust**: `statusLine` runs under the same trust gate as hooks. Until the folder (or a parent) is trusted, the status line stays blank and `claude --debug` logs `Status line command skipped: workspace trust not accepted`.
+- `claude --debug` is the fastest way to see a script's exit code and stderr from its first invocation in a session.
