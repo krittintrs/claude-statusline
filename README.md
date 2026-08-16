@@ -52,6 +52,8 @@ Then in Claude Code, run:
 
 The skill installs the statusline for you and walks you through any changes in plain English — see your current bar, browse every field and style, preview live, and write only when you're happy. Best if you want to tweak the design.
 
+→ see [Using the skill](#using-the-skill) below for how to customize it.
+
 ### Option 2 — one-liner (just the default, fast)
 
 ```bash
@@ -59,6 +61,8 @@ curl -fsSL https://raw.githubusercontent.com/krittintrs/claude-statusline/main/i
 ```
 
 Downloads `statusline.sh` to `~/.claude/`, backs up and patches `settings.json`, done. Restart Claude Code (or send a prompt) to see it.
+
+→ see [Using the skill](#using-the-skill) below — you can add it anytime, the default doesn't lock you out of customizing later.
 
 **Requirements:** `jq` (recommended) or `python3`. The script falls back gracefully. On Windows, run inside **Git Bash** — Claude Code executes the statusline through it.
 
@@ -93,7 +97,7 @@ This isn't a kitchen-sink widget dump — every choice is deliberate:
 
 ---
 
-## Customize it
+## Using the skill
 
 If you installed the skill (Option 1), just run `/statusline-setup` and describe what you want in plain English — *"remove cost"*, *"plain text instead of the gradient"*, *"add PR number"*, *"rate limits on one line"*. It previews each change live and writes only when you confirm.
 
