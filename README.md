@@ -2,13 +2,13 @@
 
 A curated, good-looking statusline for [Claude Code](https://claude.com/claude-code) — plus a guided skill to customize it in plain English.
 
-![default statusline](assets/default.svg)
+![default statusline](assets/default.png)
 
 A truecolor gradient context bar, live rate-limit countdowns, git branch/worktree, model, effort, and session cost — all in one always-visible bar below your prompt.
 
 As context fills, the bar shifts green → yellow → red and the icon escalates 🌿 → ⚡ → 🔥:
 
-![statusline at high context](assets/high-context.svg)
+![statusline at high context](assets/high-context.png)
 
 ---
 
@@ -40,6 +40,26 @@ curl -fsSL https://raw.githubusercontent.com/krittintrs/claude-statusline/main/i
 
 Downloads `statusline.sh` to `~/.claude/`, backs up and patches `settings.json`, done. Restart Claude Code (or send a prompt) to see it.
 
+### Option C — paste a prompt to Claude Code
+
+Already chatting with Claude Code? Skip the terminal — paste this in and it'll explain the two options above, ask which you want, then install it for you:
+
+```text
+Set up claude-statusline for me (https://github.com/krittintrs/claude-statusline).
+
+First explain, in 1-2 sentences each, the two install options:
+- Default: the curated statusline as-is, fast, no customization.
+- Skill: the same default, plus a /statusline-setup skill so I can customize fields
+  and display styles in plain English later.
+
+Then ask which I want, and do it:
+- Default → curl -fsSL https://raw.githubusercontent.com/krittintrs/claude-statusline/main/install.sh | bash
+- Skill → npx skills@latest add krittintrs/claude-statusline, then tell me to run
+  /statusline-setup next session.
+
+Confirm when done and tell me how to verify the statusline is showing.
+```
+
 **Requirements:** `jq` (recommended) or `python3`. The script falls back gracefully. On Windows, run inside **Git Bash** — Claude Code executes the statusline through it.
 
 ---
@@ -51,7 +71,7 @@ Downloads `statusline.sh` to `~/.claude/`, backs up and patches `settings.json`,
 | Repo / dir | `vibe` | Bold cyan; from `repo.name` or folder |
 | Git branch | `⎇ main` | Dim cyan; truncates on narrow terminals |
 | Git worktree | `[wt: feat-ui]` | Only when inside a linked worktree |
-| Model + effort | `Sonnet 4.6 medium` | |
+| Model + effort | `Sonnet 5 medium` | |
 | Context usage | `🌿 ████░░░░░░ 42%` | Gradient bar + 🌿/⚡/🔥 health icon |
 | Session cost | `$0.85` | |
 | 5h / 7d rate limits | `5h: ░░░░░░░░░░ 2% ◷ 4h 50m` | Bar + countdown (Pro/Max only) |
@@ -60,7 +80,7 @@ Downloads `statusline.sh` to `~/.claude/`, backs up and patches `settings.json`,
 
 ## The design choices
 
-![display styles](assets/styles.svg)
+![display styles](assets/styles.png)
 
 This isn't a kitchen-sink widget dump — every choice is deliberate:
 

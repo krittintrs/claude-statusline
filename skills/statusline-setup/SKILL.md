@@ -12,7 +12,7 @@ Script lives at `~/.claude/statusline.sh`. Config goes in `~/.claude/settings.js
 
 **The curated default:**
 ```
-vibe ⎇ main  │  Sonnet 4.6 medium  │  🌿 ████░░░░░░ 42%  │  $0.85
+vibe ⎇ main  │  Sonnet 5 medium  │  🌿 ████░░░░░░ 42%  │  $0.85
 ├ 5h: ░░░░░░░░░░   2% ◷ 4h 50m
 └ 7d: ███░░░░░░░  35% ◷ 18h 0m
 ```
@@ -29,7 +29,7 @@ Check whether `~/.claude/statusline.sh` exists.
 ```bash
 now=$(date +%s)
 printf '{
-  "model":{"display_name":"Sonnet 4.6"},
+  "model":{"display_name":"Sonnet 5"},
   "context_window":{"used_percentage":42},
   "cost":{"total_cost_usd":0.85},
   "workspace":{"current_dir":"/home/user/myproject","repo":{"name":"myproject"}},
@@ -71,7 +71,7 @@ Build the script per the template and **Customisation reference** in [claude-ref
 ```bash
 now=$(date +%s)
 printf '{
-  "model":{"display_name":"Sonnet 4.6"},
+  "model":{"display_name":"Sonnet 5"},
   "context_window":{"used_percentage":42},
   "cost":{"total_cost_usd":0.85},
   "workspace":{"current_dir":"/home/user/myproject","repo":{"name":"myproject"}},

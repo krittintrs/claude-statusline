@@ -7,7 +7,7 @@ Present these grouped as below. ✓ marks what the curated default already uses.
 ## Model & session
 | Field | Meaning | Default |
 |-------|---------|:---:|
-| `model.display_name` | Model name, e.g. `Sonnet 4.6` | ✓ |
+| `model.display_name` | Model name, e.g. `Sonnet 5` | ✓ |
 | `model.id` | Model identifier, e.g. `claude-sonnet-4-6` | |
 | `effort.level` | Reasoning effort: low/medium/high/xhigh/max (absent if unsupported; ultracode reports as xhigh) | ✓ |
 | `fast_mode` | Whether Fast Mode is enabled for the session | |
