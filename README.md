@@ -78,13 +78,13 @@ Downloads `statusline.sh` to `~/.claude/`, backs up and patches `settings.json`,
 
 | Segment | Example | Notes |
 |---------|---------|-------|
-| Repo / dir | `vibe` | Bold cyan; from `repo.name` or folder |
+| Repo / dir | `vibe` | Bold cyan; from `repo.name` or folder. Truncates on narrow terminals |
 | Git branch | `⎇ main` | Dim cyan; truncates on narrow terminals |
-| Git worktree | `[wt: feat-ui]` | Only when inside a linked worktree |
+| Git worktree | `[wt: feat-ui]` | Only when inside a linked worktree. Truncates on narrow terminals |
 | Model + effort | `Sonnet 5 medium` | |
 | Context usage | `🌿 ████░░░░░░ 42%` | Gradient bar + 🌿/⚡/🔥 health icon |
 | Session cost | `$0.85` | |
-| 5h / 7d rate limits | `5h: ░░░░░░░░░░ 2% ◷ 4h 50m` | Bar + countdown (Pro/Max only) |
+| 5h / 7d rate limits | `5h: ░░░░░░░░░░ 2% ◷ 4h 50m` | Bar + countdown (Pro/Max only). Dims with a `(stale)` tag right after session start/resume/`/clear`, using the last-seen reading until a fresh one arrives |
 
 ---
 
@@ -100,6 +100,8 @@ Not a kitchen-sink widget dump. Every choice is deliberate:
 - **Same-hue dir + branch** (bold cyan + dim cyan) reads as one "location" unit without adding a competing color.
 - **Space-padded percent** so the reset clock always aligns across rows.
 - **`refreshInterval: 60`** keeps countdowns ticking even when the session is idle.
+- **`FIELD_WIDTH_DIVISOR`** (top of `statusline.sh`) caps how much of the line folder/worktree/branch can take before clipping, leaving room for model/effort/context/cost on the same row. Edit the one constant to loosen or tighten it.
+- **Stale rate-limit cache** (`~/.claude/.statusline-rl-cache`) keeps the 5h/7d rows visible (dimmed, marked `(stale)`) through the gap before Claude Code's first API response, instead of the rows disappearing and reappearing.
 
 ---
 

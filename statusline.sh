@@ -16,6 +16,14 @@ GRAY=$'\033[90m'
 
 SEP="${DIM} | ${RESET}"
 
+# ── Config ────────────────────────────────────────────────────────────────────
+# How aggressively folder/worktree/branch clip on a narrow terminal: each field
+# gets a COLUMNS/FIELD_WIDTH_DIVISOR budget. Line 1 also carries the model,
+# effort, context bar, and cost after these three fields, so don't set this so
+# low (i.e. too generous a per-field budget) that those get pushed off the
+# line — raise the divisor for tighter clipping, lower it to allow more.
+FIELD_WIDTH_DIVISOR=8
+
 pct_color() {
   local p; p=$(printf '%.0f' "$1" 2>/dev/null)
   if   [ "${p:-0}" -ge 80 ]; then printf '%s' "$RED"
@@ -124,9 +132,21 @@ fi
 branch=$(git -C "${current_dir:-$(pwd)}" -c gc.auto=0 branch --show-current 2>/dev/null)
 display_name="${repo_name:-$(basename "${current_dir:-$(pwd)}")}"
 
-if [ -n "$branch" ] && [ -n "$COLUMNS" ] && [ "$COLUMNS" -gt 0 ]; then
-  max_branch=$(( COLUMNS / 4 ))
-  [ "${#branch}" -gt "$max_branch" ] && branch="${branch:0:$(( max_branch - 1 ))}…"
+# Clip long fields on narrow terminals: folder, worktree, and branch each get
+# their own COLUMNS/FIELD_WIDTH_DIVISOR budget (see Config, above) so no single
+# long field (e.g. an auto-generated worktree name) can blow past the line on
+# its own — and so the three of them together still leave room for the rest
+# of line 1 (model, effort, context bar, cost).
+trunc_field() {
+  local s="$1" max="$2"
+  [ "$max" -ge 1 ] && [ "${#s}" -gt "$max" ] && printf '%s' "${s:0:$(( max > 1 ? max - 1 : 0 ))}…"
+}
+
+if [ -n "$COLUMNS" ] && [ "$COLUMNS" -gt 0 ]; then
+  max_field=$(( COLUMNS / FIELD_WIDTH_DIVISOR ))
+  t=$(trunc_field "$display_name" "$max_field"); [ -n "$t" ] && display_name="$t"
+  t=$(trunc_field "$worktree" "$max_field");     [ -n "$t" ] && worktree="$t"
+  t=$(trunc_field "$branch" "$max_field");       [ -n "$t" ] && branch="$t"
 fi
 
 # ── Line 1 ────────────────────────────────────────────────────────────────────
@@ -176,6 +196,38 @@ fi
 
 printf '%b\n' "$out"
 
+# ── Rate-limit stale-cache fallback ─────────────────────────────────────────────
+# rate_limits is absent right after session start/resume/`/clear` (no API
+# response yet) and briefly again once a window's resets_at passes. Rather than
+# dropping the row (which reads as a glitch), fall back to the last-seen value
+# from a small cache file and mark it (stale). Expired entries are never
+# written back, so a rolled-over window naturally falls off the cache too.
+CACHE_FILE="${HOME}/.claude/.statusline-rl-cache"
+cache_get() { grep -m1 "^$1=" "$CACHE_FILE" 2>/dev/null | cut -d= -f2-; }
+
+now_ts=$(date +%s 2>/dev/null)
+c_rl5_pct=$(cache_get RL5_PCT); c_rl5_resets=$(cache_get RL5_RESETS)
+c_rl7_pct=$(cache_get RL7_PCT); c_rl7_resets=$(cache_get RL7_RESETS)
+
+rl5_stale=""; rl7_stale=""
+if { [ -z "$rl5_pct" ] || [ "$rl5_pct" = "None" ]; } \
+   && [ -n "$c_rl5_resets" ] && [ -n "$now_ts" ] && [ "$c_rl5_resets" -gt "$now_ts" ] 2>/dev/null; then
+  rl5_pct="$c_rl5_pct"; rl5_resets="$c_rl5_resets"; rl5_stale=1
+fi
+if { [ -z "$rl7_pct" ] || [ "$rl7_pct" = "None" ]; } \
+   && [ -n "$c_rl7_resets" ] && [ -n "$now_ts" ] && [ "$c_rl7_resets" -gt "$now_ts" ] 2>/dev/null; then
+  rl7_pct="$c_rl7_pct"; rl7_resets="$c_rl7_resets"; rl7_stale=1
+fi
+
+{
+  [ -n "$rl5_pct" ] && [ "$rl5_pct" != "None" ] && [ -n "$rl5_resets" ] && [ -n "$now_ts" ] \
+    && [ "$rl5_resets" -gt "$now_ts" ] 2>/dev/null \
+    && printf 'RL5_PCT=%s\nRL5_RESETS=%s\n' "$rl5_pct" "$rl5_resets"
+  [ -n "$rl7_pct" ] && [ "$rl7_pct" != "None" ] && [ -n "$rl7_resets" ] && [ -n "$now_ts" ] \
+    && [ "$rl7_resets" -gt "$now_ts" ] 2>/dev/null \
+    && printf 'RL7_PCT=%s\nRL7_RESETS=%s\n' "$rl7_pct" "$rl7_resets"
+} > "$CACHE_FILE" 2>/dev/null
+
 # ── Lines 2–3: rate limits ────────────────────────────────────────────────────
 # [FIELD: 5h]
 if [ -n "$rl5_pct" ] && [ "$rl5_pct" != "None" ] && [ -n "$rl5_resets" ]; then
@@ -183,9 +235,10 @@ if [ -n "$rl5_pct" ] && [ "$rl5_pct" != "None" ] && [ -n "$rl5_resets" ]; then
   f=$(( rl5_int / 10 )); e=$(( 10 - f ))
   bar=""; i=0; while [ $i -lt $f ]; do bar="${bar}█"; i=$((i+1)); done
            i=0; while [ $i -lt $e ]; do bar="${bar}░"; i=$((i+1)); done
-  c=$(pct_color "$rl5_pct")
+  if [ -n "$rl5_stale" ]; then c="$DIM"; suffix=" ${DIM}(stale)${RESET}"
+  else c=$(pct_color "$rl5_pct"); suffix=""; fi
   cd=$(mk_countdown "$rl5_resets" "hm")
-  printf "${DIM}\xe2\x94\x9c${RESET} ${WHITE}5h:${RESET} ${c}${bar}%3d%%${RESET} ${DIM}◷ ${cd}${RESET}\n" "$rl5_int"
+  printf "${DIM}\xe2\x94\x9c${RESET} ${WHITE}5h:${RESET} ${c}${bar}%3d%%${RESET} ${DIM}◷ ${cd}${RESET}${suffix}\n" "$rl5_int"
 fi
 
 # [FIELD: 7d]
@@ -194,7 +247,8 @@ if [ -n "$rl7_pct" ] && [ "$rl7_pct" != "None" ] && [ -n "$rl7_resets" ]; then
   f=$(( rl7_int / 10 )); e=$(( 10 - f ))
   bar=""; i=0; while [ $i -lt $f ]; do bar="${bar}█"; i=$((i+1)); done
            i=0; while [ $i -lt $e ]; do bar="${bar}░"; i=$((i+1)); done
-  c=$(pct_color "$rl7_pct")
+  if [ -n "$rl7_stale" ]; then c="$DIM"; suffix=" ${DIM}(stale)${RESET}"
+  else c=$(pct_color "$rl7_pct"); suffix=""; fi
   cd=$(mk_countdown "$rl7_resets" "dhm")
-  printf "${DIM}\xe2\x94\x94${RESET} ${WHITE}7d:${RESET} ${c}${bar}%3d%%${RESET} ${DIM}◷ ${cd}${RESET}\n" "$rl7_int"
+  printf "${DIM}\xe2\x94\x94${RESET} ${WHITE}7d:${RESET} ${c}${bar}%3d%%${RESET} ${DIM}◷ ${cd}${RESET}${suffix}\n" "$rl7_int"
 fi
