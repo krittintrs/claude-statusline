@@ -85,6 +85,7 @@ Downloads `statusline.sh` to `~/.claude/`, backs up and patches `settings.json`,
 | Context usage | `🌿 ████░░░░░░ 42%` | Gradient bar + 🌿/⚡/🔥 health icon |
 | Session cost | `$0.85` | |
 | 5h / 7d rate limits | `5h: ░░░░░░░░░░ 2% ◷ 4h 50m` | Bar + countdown (Pro/Max only). Dims with a `(stale)` tag right after session start/resume/`/clear`, using the last-seen reading until a fresh one arrives |
+| Spend limit | `spend: ██████████ 112% ◷ 12d 4h` | Only behind a Claude apps gateway with a spend limit set — invisible otherwise. Bar caps at 10/10 once past 100% |
 
 ---
 
